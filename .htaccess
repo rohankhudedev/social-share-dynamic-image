@@ -1,0 +1,45 @@
+Options +FollowSymLinks -MultiViews
+
+# Turn mod_rewrite on
+RewriteEngine On
+
+RewriteRule ^(console)($|/) - [L]
+
+RewriteBase / 
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_URI} !(.*)/$
+
+RewriteEngine on
+
+# Remove .php extension
+RewriteCond %{THE_REQUEST} ^GET\ /[^?\s]+\.php
+RewriteRule (.*)\.php$ /$1/ [L,R=301]
+
+RewriteCond %{THE_REQUEST} ^GET\ /[^?\s]+\.php
+RewriteRule (.*)\.php/$ /$1/ [L,R=301]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+#RewriteCond %{REQUEST_URI} ^/(.+)/$
+RewriteCond %{DOCUMENT_ROOT}/%1.php -f
+RewriteRule ^(.*)/$ $1.php [L]
+
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{DOCUMENT_ROOT}/$1.php -f [NC]
+RewriteRule ^(.+?)/?$ /$1.php [L]
+
+# browser requests PHP
+RewriteCond %{THE_REQUEST} ^[A-Z]{3,9}\ /([^\ ]+)\.php
+RewriteRule ^/?(.*)\.php$ /$1 [L,R=301]
+
+# check to see if the request is for a PHP file:
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)/$ /$1 [L,R]
+
+
+# fix css/images/js links
+RewriteRule ^.+?/((?:css|images|js)/.+)$ $1 [L,NC,NE,R=301]
+
+#all new url structure suggested by client
+RewriteRule ^getImage/([0-9]+)$ getImage.php?msg=$1
